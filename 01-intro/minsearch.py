@@ -20,7 +20,7 @@ class Index:
 
     def __init__(
         self,
-        text_fields: list[dict],
+        text_fields: list[str],
         keyword_fields: list,
         vectorizer_params: dict = {},
     ):
