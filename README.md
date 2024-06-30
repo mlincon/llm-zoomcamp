@@ -12,3 +12,6 @@ Link: https://github.com/DataTalksClub/llm-zoomcamp
 https://stackoverflow.com/questions/7726949/remove-tracking-branches-no-longer-on-remote
 
 `git fetch -p && for branch in $(git branch -vv | grep ': gone]' | awk '{print $1}'); do git branch -D $branch; done`
+
+# Helpful links
+- Ollama pull for docker: https://github.com/docker/genai-stack
