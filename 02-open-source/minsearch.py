@@ -6,7 +6,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 class Index:
     """
-    A simple search index using TF-IDF and cosine similarity for text fields and exact matching for keyword fields.
+    A simple search index using TF-IDF and cosine similarity for text
+    fields and exact matching for keyword fields.
 
     Attributes:
         text_fields (list): List of text field names to index.
@@ -17,7 +18,12 @@ class Index:
         docs (list): List of documents indexed.
     """
 
-    def __init__(self, text_fields, keyword_fields, vectorizer_params={}):
+    def __init__(
+        self,
+        text_fields: list[str],
+        keyword_fields: list,
+        vectorizer_params: dict = {},
+    ):
         """
         Initializes the Index with specified text and keyword fields.
 
@@ -32,11 +38,11 @@ class Index:
         self.vectorizers = {
             field: TfidfVectorizer(**vectorizer_params) for field in text_fields
         }
-        self.keyword_df = None
+        self.keyword_df: pd.DataFrame | None = None
         self.text_matrices = {}
         self.docs = []
 
-    def fit(self, docs):
+    def fit(self, docs: list[dict]):
         """
         Fits the index with the provided documents.
 
@@ -44,7 +50,7 @@ class Index:
             docs (list of dict): List of documents to index. Each document is a dictionary.
         """
         self.docs = docs
-        keyword_data = {field: [] for field in self.keyword_fields}
+        keyword_data: dict = {field: [] for field in self.keyword_fields}
 
         for field in self.text_fields:
             texts = [doc.get(field, "") for doc in docs]
@@ -58,14 +64,22 @@ class Index:
 
         return self
 
-    def search(self, query, filter_dict={}, boost_dict={}, num_results=10):
+    def search(
+        self,
+        query: str,
+        filter_dict: dict = {},
+        boost_dict: dict = {},
+        num_results: int = 10,
+    ):
         """
         Searches the index with the given query, filters, and boost parameters.
 
         Args:
             query (str): The search query string.
-            filter_dict (dict): Dictionary of keyword fields to filter by. Keys are field names and values are the values to filter by.
-            boost_dict (dict): Dictionary of boost scores for text fields. Keys are field names and values are the boost scores.
+            filter_dict (dict): Dictionary of keyword fields to filter by.
+                Keys are field names and values are the values to filter by.
+            boost_dict (dict): Dictionary of boost scores for text fields.
+                Keys are field names and values are the boost scores.
             num_results (int): The number of top results to return. Defaults to 10.
 
         Returns:
@@ -86,6 +100,8 @@ class Index:
         # Apply keyword filters
         for field, value in filter_dict.items():
             if field in self.keyword_fields:
+                if self.keyword_df is None:
+                    raise ValueError("DataFrame cannot be empty")
                 mask = self.keyword_df[field] == value
                 scores = scores * mask.to_numpy()
 
